@@ -36,6 +36,49 @@
         </form>
       </div>
     </div>
+    <!-- 调用BS插件 模态框使用 -->
+    <!-- Button trigger modal -->
+    <button
+      type="button"
+      class="btn btn-primary btn-lg"
+      data-toggle="modal"
+      data-target="#myModal"
+    >
+      Launch demo modal
+    </button>
+
+    <!-- Modal -->
+    <div
+      class="modal fade"
+      id="myModal"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="myModalLabel"
+    >
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+            <h4 class="modal-title" id="myModalLabel">温馨提示</h4>
+          </div>
+          <div class="modal-body">
+            ...
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-dismiss="modal">
+              关闭
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <script>
       $(function() {
@@ -50,7 +93,8 @@
             .val()
             .trim();
           if (input_txt === "" || input_pass === "") {
-            alert("你输入的用户名或密码为空！");
+            $(".modal-body").html("你输入的用户名或密码为空！");
+            $("#myModal").modal({ keyboard: true });
             return;
           }
           $.ajax({
@@ -65,12 +109,13 @@
               const code = response.code;
               const msg = response.msg;
               const token = response.token;
+              //登陆成功后台返回200，用于分支判断
               if (code === 200) {
-                // alert(msg);
                 localStorage.setItem("token", token);
-              } else {
-                // alert(msg);
+                location.href = "./index.html";
               }
+              $(".modal-body").html(msg);
+              $("#myModal").modal({ keyboard: true });
             }
           });
         });
