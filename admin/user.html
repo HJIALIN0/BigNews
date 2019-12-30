@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="css/iconfont.css" />
     <link rel="stylesheet" href="css/main.css" />
     <script src="./libs/jquery-1.12.4.min.js"></script>
+    <script src="./libs/bootstrap/js/bootstrap.min.js"></script>
   </head>
 
   <body>
@@ -118,58 +119,72 @@
         //1.页面一加载时，渲染个人信息页面
         $.ajax({
           url: urls.user_detail,
-          type: "get",
-          dataType: "json",
           success: function(backdata) {
+            console.log(backdata);
             //渲染页面
             // $("input.username").val(backdata.data.username);
             // $("input.nickname").val(backdata.data.nickname);
             // $("input.email").val(backdata.data.email);
             // $("input.password").val(backdata.data.password);
             //遍历对象优化代码
-            for (const key in backdata.data) {
-              $("input." + key).val(backdata.data[key]);
+            if (backdata.code === 200) {
+              for (const key in backdata.data) {
+                //如果不是图片
+                if (key !== "userPic") {
+                  $("input." + key).val(backdata.data[key]);
+                }
+              }
             }
+            //图片修改src属性
             $("img.user_pic").attr("src", backdata.data.userPic);
           }
         });
         //2.文件预览
         //1.1给file表单元素注册onchange事件
-        var url;
+        let url;
         $("#exampleInputFile").change(function() {
           //1.2 获取用户选择的图片
           var file = this.files[0];
-          //1.3 将文件转为src路径
-          url = URL.createObjectURL(file);
-          //1.4 将url路径赋值给img标签的src
-          $(".user_pic").attr("src", url);
+          if (file) {
+            //1.3 将文件转为src路径
+            url = URL.createObjectURL(file);
+            //1.4 将url路径赋值给img标签的src
+            $(".user_pic").attr("src", url);
+          }
+        });
+        //点击图片触发图片上传
+        $(".user_pic").click(function() {
+          $("#exampleInputFile").trigger("click");
         });
 
-        //3.编辑个人信息(fromdata上传文件)
+        //3.修改用户昵称
+        var nickName;
+        $("#inputEmail2").change(function() {
+          //获取用户修改的昵称
+          // console.dir(this.value);
+          nickName = this.value;
+        });
+        //4.编辑个人信息(fromdata上传文件)
         $("#form").on("submit", function(e) {
           //禁用表单默认提交事件
           e.preventDefault();
+          const fdObj = new FormData(this);
+          // console.log(fdObj.get("password"));
           $.ajax({
             url: BigNew.user_edit,
             type: "post",
-            dataType: "json",
-            data: new FormData(this),
+            data: fdObj,
             contentType: false,
             processData: false,
-            success: function(backData) {
-              console.log(backData);
-              if (backData.code == 200) {
-                alert("修改成功");
-                /* 
-                window:            当前页面窗口 user.html
-                window.parent:     当前页面父窗口 index.html
-                */
-                // window.parent.location.reload();
-                parent
-                  .$(".user_info img,.user_center_link img")
-                  .attr("src", url);
-                // parent.$(".user_info span").html("欢迎你" + nickName);
-              }
+            success: function(response) {
+              console.log(response);
+              const msg = response.msg;
+              alert(msg);
+              //父页面刷新
+              // parent.location.reload();
+              parent.$(".user_info img,.user_center_link img").attr("src", url);
+              //修改昵称
+              parent.$(".user_info span").text("欢迎你 : " + nickName);
             }
           });
         });
