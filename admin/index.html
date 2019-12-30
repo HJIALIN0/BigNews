@@ -25,12 +25,12 @@
       <!-- 左侧导航栏 -->
       <div class="menu">
         <div class="level01 active">
-          <a href="#" target="main_frame"
+          <a href="main_count.html" target="main_frame"
             ><i class="iconfont icon-yidiandiantubiao04"></i
             ><span>首页</span></a
           >
         </div>
-        <div class="level01">
+        <div class="level01 ">
           <a href="#"
             ><i class="iconfont icon-icon-article"></i><span>文章管理</span
             ><b class="iconfont icon-arrowdownl"></b
@@ -38,19 +38,19 @@
         </div>
         <ul class="level02">
           <li>
-            <a href="#" target="main_frame"
+            <a href="article_list.html" target="main_frame"
               ><i class="iconfont icon-previewright"></i
               ><span>文章列表</span></a
             >
           </li>
           <li>
-            <a href="#" target="main_frame"
+            <a href="article_release.html" target="main_frame"
               ><i class="iconfont icon-previewright"></i
               ><span>发表文章</span></a
             >
           </li>
           <li>
-            <a href="#" target="main_frame"
+            <a href="article_category.html" target="main_frame"
               ><i class="iconfont icon-previewright"></i
               ><span>文章类别管理</span></a
             >
@@ -58,12 +58,12 @@
         </ul>
 
         <div class="level01">
-          <a href="#" target="main_frame"
+          <a href="comment_list.html" target="main_frame"
             ><i class="iconfont icon-comment"></i><span>评论管理</span></a
           >
         </div>
         <div class="level01" id="user">
-          <a href="#" target="main_frame"
+          <a href="user.html" target="main_frame"
             ><i class="iconfont icon-user"></i><span>个人中心</span></a
           >
         </div>
@@ -79,25 +79,67 @@
         </div>
       </div>
       <!-- 右侧主体内容 -->
-      <div class="main" id="main_body"></div>
+      <div class="main" id="main_body">
+        <iframe
+          name="main_frame"
+          src="./main_count.html"
+          frameborder="0"
+          width="100%"
+          height="100%"
+        ></iframe>
+      </div>
     </div>
+
+    <script src="./js/http.js"></script>
     <script>
       $(function() {
-        const token = localStorage.getItem("token");
-        if (!token) {
-          location.href = "./login.html";
-        }
         $.ajax({
-          url: "http://localhost:8080/api/v1/admin/user/info",
-          headers: {
-            Authorization: token
-          },
+          url: urls.userInfo,
           success: function(response) {
             const nickname = response.data.nickname;
             const userPic = response.data.userPic;
             $(".user_info img,.user_center_link img").attr("src", userPic);
             $(".user_info span").html("欢迎你：" + nickname);
           }
+        });
+
+        //点击左侧导航栏效果
+        $(".level01").click(function() {
+          //1.排他思想修改样式
+          $(this)
+            .addClass("active")
+            .siblings()
+            .removeClass("active");
+          //1.2如果点击是文章管理，应该下滑二级列表ul
+          if (
+            $(this)
+              .next()
+              .hasClass("level02")
+          ) {
+            //滑入滑出切换
+            $(this)
+              .next()
+              .slideToggle();
+            //旋转90度切换
+            $(this)
+              .find("b")
+              .toggleClass("rotate0");
+            // 默认选中第一个：DOM对象
+            $(".level02>li>a")
+              .first()[0]
+              .click();
+          } else {
+            //如果点击的不是文章管理一级菜单列表，则移除二级列表的选中样式
+            $(".level02>li").removeClass("active");
+          }
+
+          //2.二级列表
+          $(".level02>li").click(function() {
+            $(this)
+              .addClass("active")
+              .siblings()
+              .removeClass("active");
+          });
         });
       });
     </script>
