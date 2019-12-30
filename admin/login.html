@@ -79,7 +79,7 @@
         </div>
       </div>
     </div>
-
+    <script src="./js/http.js"></script>
     <script>
       $(function() {
         //给 login_form 注册提交事件
@@ -99,7 +99,7 @@
           }
           $.ajax({
             type: "post",
-            url: "http://localhost:8080/api/v1/admin/user/login",
+            url: urls.user_login,
             data: {
               username: input_txt,
               password: input_pass

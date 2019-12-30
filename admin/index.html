@@ -71,9 +71,14 @@
       <!-- 顶部栏 -->
       <div class="header_bar">
         <div class="user_center_link">
-          <a href="./user.html" target="main_frame">个人中心</a>
+          <a
+            href="./user.html"
+            target="main_frame"
+            onclick="$('#user').trigger('click')"
+            >个人中心</a
+          >
           <img src="images/2.jpg" alt="person" />
-          <a href="javascript:void(0)" class="logout"
+          <a href="login.html" class="logout"
             ><i class="iconfont icon-tuichu"></i> 退出</a
           >
         </div>
@@ -94,7 +99,7 @@
     <script>
       $(function() {
         $.ajax({
-          url: urls.userInfo,
+          url: urls.user_info,
           success: function(response) {
             const nickname = response.data.nickname;
             const userPic = response.data.userPic;
